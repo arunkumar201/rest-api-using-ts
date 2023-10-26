@@ -1,6 +1,5 @@
-import mongoose, { ConnectOptions, Mongoose, } from "mongoose";
-
-import dotenv from "dotenv";
+import dotenv from 'dotenv';
+import mongoose, { ConnectOptions, Mongoose } from 'mongoose';
 
 dotenv.config();
 mongoose.set("strictQuery", false);
@@ -20,8 +19,8 @@ class Database {
 			this.connection = await mongoose.connect(this.uri, this.options);
 			console.log(
 				`Connected to database: ${this.connection.connection.db.databaseName}`
-      );
-      return;
+			);
+			return;
 		} catch (error) {
 			throw error;
 		}

@@ -1,41 +1,41 @@
+import { DB_NAME, MONGODB_URI, PORT } from "./constants/index";
+
 import { ConnectOptions } from "mongoose";
-import Database from "./config/database";
+import Database from "./db/database";
 import bodyParser from "body-parser";
 import compression from "compression";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
-import http from "http";
-import { register } from "./controllers/auth.controller";
-import userRouter from './../src/routes/user.route'
-
-const router = express.Router(); 
+import router from "./routes/crud.route";
 
 dotenv.config();
 
-const port = process.env.PORT || 8000;
-const db = new Database(process.env.MONGODB_URI!, {
+//Database Instace 
+const db = new Database(MONGODB_URI, {
 	useNewUrlParser: true,
 	useUnifiedTopology: true,
-	dbName: "rest-apis-ts",
+	dbName: DB_NAME,
 } as ConnectOptions);
+
+//Connect with DATABASE
 db.connect().catch((err: unknown) =>
 	console.error("Error connecting to database:", err)
 );
+
 const app = express();
-app.use(
-	cors({
-		credentials: true,
-	})
-);
+
+//middlewares 
+app.use(cors({credentials: true}));
 app.use(compression());
 app.use(bodyParser.json());
 app.use(cookieParser());
-const server = http.createServer(app);
-router.post("/user", register);
+
+//Routes
+app.use(router);
 
 
-server.listen(port, () => {
-	console.log(`express server is running on port ${port}`);
+app.listen(PORT, () => {
+	console.log(`express server is running on port ${PORT}`);
 });
