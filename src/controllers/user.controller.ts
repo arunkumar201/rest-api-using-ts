@@ -1,109 +1,117 @@
 import { NextFunction, Request, Response } from "express";
+import {
+	createUser,
+	deleteUser,
+	getAllUsers,
+	getUserDetails,
+	updateUser,
+} from "../services/user.service";
 
-import { getAllUsers } from "../services/user.service";
+import { IUser } from "types/user.types";
 
 //get methods
-export const getUsers = async (req:Request,res:Response,next:NextFunction) => {
+export const get = async (req: Request, res: Response, next: NextFunction) => {
 	try {
 		const users = await getAllUsers();
 		if (users) {
-			res.status(201).json({ users: users }).sendStatus(201);
-			return;
+			res.status(201).json({ users: users });
 		}
 	} catch (err: unknown) {
-		console.log("Error is Occurred in getUsers",err);
-		res.status(501).json({ message: "Something went wrong",error: err })
-		return;
+		console.log("Error is Occurred in getUsers", err);
+		next(err);
 	}
 };
 
+export const getUser = async (
+	req: Request,
+	res: Response,
+	next: NextFunction
+) => {
+	try {
+		console.debug("🚀 ~ file: user.controller.ts:28 ~ getUser ~ email:");
+		const { email } = req.params;
+		const users = await getUserDetails(email);
+		if (users) {
+			res.status(201).json({ users: users });
+		} else {
+			return res.status(404).json({ message: "user not found" });
+		}
+	} catch (err: unknown) {
+		console.log("Error is Occurred in getUsers", err);
+		next(err);
+	}
+};
 
-// export const getUserByUserName = async (
-// 	userName: string
-// ): Promise<IUser | null> => {
-// 	try {
-// 		const user = await userModel.findOne({ userName });
-// 		if (!user) {
-// 			return null;
-// 		}
-// 		return user;
-// 	} catch (e: unknown) {
-// 		console.log("Error is Occurred in getUserByUserName", e);
-// 	}
-// };
+//Post Methods
+export const create = async (
+	req: Request,
+	res: Response,
+	next: NextFunction
+) => {
+	try {
+		const { fullName, email } = req.body;
+		const userData: IUser = {
+			fullName,
+			email: email.toLowerCase(),
+		};
+		const result = await createUser(userData);
 
-// export const getUserByEmail = async (email: string): Promise<IUser | null> => {
-// 	try {
-// 		const user = await userModel.findOne({ email });
-// 		if (!user) {
-// 			return null;
-// 		}
-// 		return user;
-// 	} catch (e: unknown) {
-// 		console.log("Error is Occurred in getUserByEmail", e);
-// 	}
-// };
+		res.json({ data: result }).status(201);
+	} catch (error) {
+		console.log(`error while creating user: ${error}`);
+		next(error);
+	}
+};
 
-// export const getUserBySessionToken = async (
-// 	sessionToken: string
-// ): Promise<IUser | null> => {
-// 	try {
-// 		const user = await userModel.findOne({
-// 			"authentication.sessionToken": sessionToken,
-// 		});
-// 		if (!user) {
-// 			return null;
-// 		}
-// 		return user;
-// 	} catch (e: unknown) {
-// 		console.log("Error is Occurred in getUserBySessionToken", e);
-// 	}
-// };
-// //Post Methods
-// export const createUser = async (user: Record<string, IUser>) => {
-// 	// <!--check if User Exist or not-->
-// 	const userName: any = user.userName;
-// 	const email: any = user.email;
-// 	const isExist = await userModel.findOne({
-// 		email: { $eq: email },
-// 		userName: { $eq: userName },
-// 	});
-// 	const newUser = new userModel(user);
-// 	await newUser.save();
-// 	if (newUser.isNew && isExist) {
-// 		throw new Error("User already exists");
-// 	}
-// 	return true;
-	
-// };
-// //update Methods (PATH)
-// // <!-- delete User By UserName -->
-// export const deleteUserByUserName = async (
-// 	userName: string
-// ): Promise<boolean> => {
-// 	try {
-// 		await userModel.findOneAndDelete({ userName });
-// 		return true;
-// 	} catch (e: unknown) {
-// 		console.log("Something went wrong,can't delete user");
-// 	}
-// 	return false;
-// };
+//PUT method
+export const update = async (
+	req: Request,
+	res: Response,
+	next: NextFunction
+) => {
+	try {
+		const { email, fullName } = req.body;
 
-// export const updateUserByUserName = async (
-// 	userName: string,
-// 	updatedData: Partial<IUser>
-// ): Promise<boolean> => {
-// 	try {
-// 		const result = await userModel.findOneAndUpdate({ userName }, updatedData);
+		const data = {
+			email,
+			fullName,
+		};
 
-// 		if (result) {
-// 			return true;
-// 		} else {
-// 			console.log("User not found.");
-// 		}
-// 	} catch (e: unknown) {
-// 		console.log("Something went wrong, can't update user.");
-// 	}
-// 	return false;
-// };
+		const result = await updateUser(data);
+
+		if (result) {
+			return res
+				.status(200)
+				.json({ message: "User updated successfully", user: result });
+		} else {
+			return res.status(404).json({ message: "User not found" });
+		}
+	} catch (error) {
+		console.error(`Error while updating user: ${error}`);
+		return res.status(500).json({ message: "Internal server error" });
+	}
+};
+
+// DELETE method
+export const remove = async (
+	req: Request,
+	res: Response,
+	next: NextFunction
+) => {
+	try {
+		const { email } = req.body;
+
+		const deletedUser = await deleteUser(email);
+
+		if (deletedUser) {
+			return res
+				.status(200)
+				.json({ message: "User deleted successfully", user: deletedUser });
+		} else {
+			return res.status(404).json({ message: "User not found" });
+		}
+	} catch (error) {
+		console.error(`Error while deleting user: ${error}`);
+		return res.status(500).json({ message: "Internal server error" });
+	}
+};

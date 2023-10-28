@@ -1,18 +1,16 @@
-import { DB_NAME, MONGODB_URI, PORT } from "./constants/index";
+import { DB_NAME, MONGODB_URI, PORT } from './constants/index';
 
-import { ConnectOptions } from "mongoose";
-import Database from "./db/database";
-import bodyParser from "body-parser";
-import compression from "compression";
-import cookieParser from "cookie-parser";
-import cors from "cors";
-import dotenv from "dotenv";
-import express from "express";
-import router from "./routes/crud.route";
+import { ConnectOptions } from 'mongoose';
+import Database from './db/database';
+import bodyParser from 'body-parser';
+import cors from 'cors';
+import dotenv from 'dotenv';
+import express from 'express';
+import userRoutes from './routes/crud.route';
 
 dotenv.config();
 
-//Database Instace 
+//Database Instace
 const db = new Database(MONGODB_URI, {
 	useNewUrlParser: true,
 	useUnifiedTopology: true,
@@ -26,15 +24,17 @@ db.connect().catch((err: unknown) =>
 
 const app = express();
 
-//middlewares 
-app.use(cors({credentials: true}));
-app.use(compression());
+//middlewares
+app.use(cors({ credentials: true }));
 app.use(bodyParser.json());
-app.use(cookieParser());
+app.use(
+	bodyParser.urlencoded({
+		extended: true,
+	})
+);
 
 //Routes
-app.use(router);
-
+app.use(userRoutes);
 
 app.listen(PORT, () => {
 	console.log(`express server is running on port ${PORT}`);

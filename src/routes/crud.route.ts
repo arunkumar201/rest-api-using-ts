@@ -1,20 +1,24 @@
-import express, { Request, Response } from 'express'
+import { create, get, getUser, remove, update } from "../controllers/user.controller";
+import express, { Request, Response } from "express";
 
-import { getUsers } from '../controllers/user.controller';
-
-const router = express.Router(); 
-
+const userRoutes = express.Router();
 
 //GET APIS COLLECTIONS
-router.get("/",(req: Request,res: Response) => {	
-	res.send({ message: "Welcome to the Rest Api with ts" }).send(201);
-	
+userRoutes.get("/",(req: Request,res: Response) => {
+	res.send({ message: "Welcome to the Rest Api with ts" });
+
 });
 
-router.get("/users", getUsers);
+userRoutes.get("/users", get);
+userRoutes.get("/users/:email", getUser);
 
+//post
+userRoutes.post("/create-user", create);
 
+//put
+userRoutes.delete("/delete-user", remove);
 
+//delete
+userRoutes.put("/update-user", update);
 
-
-export default router;
+export default userRoutes;
