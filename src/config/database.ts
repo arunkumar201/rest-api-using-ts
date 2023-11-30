@@ -1,5 +1,6 @@
-import dotenv from 'dotenv';
 import mongoose, { ConnectOptions, Mongoose } from 'mongoose';
+
+import dotenv from 'dotenv';
 
 dotenv.config();
 mongoose.set("strictQuery", false);
