@@ -1,16 +1,16 @@
-import { DB_NAME, MONGODB_URI, PORT } from './constants/index';
+import { DB_NAME, MONGODB_URI, PORT } from "./constants/index";
+import express, { Request, Response } from "express";
 
-import { ConnectOptions } from 'mongoose';
-import Database from './db/database';
-import bodyParser from 'body-parser';
-import cors from 'cors';
-import dotenv from 'dotenv';
-import express from 'express';
-import userRoutes from './routes/crud.route';
+import { ConnectOptions } from "mongoose";
+import Database from "./config/database";
+import bodyParser from "body-parser";
+import cors from "cors";
+import dotenv from "dotenv";
+import userRoutes from "./routes/crud.route";
 
 dotenv.config();
 
-//Database Instace
+//Database Instance
 const db = new Database(MONGODB_URI, {
 	useNewUrlParser: true,
 	useUnifiedTopology: true,
@@ -23,6 +23,13 @@ db.connect().catch((err: unknown) =>
 );
 
 const app = express();
+
+//getting server status
+app.get("/server-status", (req: Request, res: Response) => {
+	res.status(200).json({
+		message: "Server is up running! ",
+	});
+});
 
 //middlewares
 app.use(cors({ credentials: true }));
