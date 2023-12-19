@@ -4,9 +4,12 @@
 		"target": "es6",
 		"esModuleInterop": true,
 		"moduleResolution": "NodeNext",
-		"baseUrl": "src",
 		"noImplicitAny": true,
 		"outDir": "dist",
+		"baseUrl": "./",
+		"paths": {
+			"*": ["src/*"]
+		},
 		"sourceMap": true,
 		"types": ["node"]
 	},
