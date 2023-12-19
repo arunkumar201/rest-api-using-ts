@@ -6,7 +6,13 @@ import Database from "./config/database";
 import bodyParser from "body-parser";
 import cors from "cors";
 import dotenv from "dotenv";
+import passport from "passport";
 import userRoutes from "./routes/crud.route";
+import passportAuth from "../src/config/passport.config";
+
+const app = express();
+app.use(passport.initialize());
+passportAuth.initialize();
 
 dotenv.config();
 
@@ -21,8 +27,6 @@ const db = new Database(MONGODB_URI, {
 db.connect().catch((err: unknown) =>
 	console.error("Error connecting to database:", err)
 );
-
-const app = express();
 
 //getting server status
 app.get("/server-status", (req: Request, res: Response) => {
