@@ -7,20 +7,24 @@ import {
 	updateUser,
 } from "../services/user.service";
 
+import { IAuthRequest } from "middleware/auth/auth.middleware";
 import { IUser } from "types/user.types";
+import expressAsyncHandler from "express-async-handler";
 
 //get methods
-export const get = async (req: Request, res: Response, next: NextFunction) => {
-	try {
-		const users = await getAllUsers();
-		if (users) {
-			res.status(201).json({ users: users });
+export const get = expressAsyncHandler(
+	async (req: IAuthRequest, res: Response, next: NextFunction) => {
+		try {
+			const users = await getAllUsers();
+			if (users) {
+				res.status(201).json({ users: users });
+			}
+		} catch (err: unknown) {
+			console.log("Error is Occurred in getUsers", err);
+			next(err);
 		}
-	} catch (err: unknown) {
-		console.log("Error is Occurred in getUsers", err);
-		next(err);
 	}
-};
+);
 
 export const getUser = async (
 	req: Request,
