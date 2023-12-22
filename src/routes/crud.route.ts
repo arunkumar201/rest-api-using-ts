@@ -22,11 +22,9 @@ userRoutes.get("/users/:email", getUser);
 
 //post
 userRoutes.post("/create-user", create);
-
-//put
-userRoutes.delete("/delete-user", remove);
-
 //delete
+userRoutes.delete("/delete-user", remove);
+//put
 userRoutes.put("/update-user", update);
 
 export default userRoutes;
