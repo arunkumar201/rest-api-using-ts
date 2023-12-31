@@ -6,9 +6,10 @@ import Database from "./config/database";
 import bodyParser from "body-parser";
 import cors from "cors";
 import dotenv from "dotenv";
+import { logger } from "./middleware/logger/logger.middleware";
 import passport from "passport";
-import userRoutes from "./routes/crud.route";
 import passportAuth from "../src/config/passport.config";
+import userRoutes from "./routes/crud.route";
 
 const app = express();
 app.use(passport.initialize());
@@ -43,8 +44,15 @@ app.use(
 		extended: true,
 	})
 );
+app.use(logger);
 
 //Routes
+app.get("/getIp", (req: Request, res: Response) => {
+	console.log("object");
+	res.status(200).json({
+		ip: req.ip.toString(),
+	});
+});
 app.use(userRoutes);
 
 app.listen(PORT, () => {
