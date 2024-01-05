@@ -1,6 +1,7 @@
 import { Document } from "mongoose";
 
-export interface IUser  {
-  fullName: string;
-  email: string;
+export interface IUser {
+	fullName: string;
+	email: string;
+	password?: string;
 }

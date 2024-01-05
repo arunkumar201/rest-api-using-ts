@@ -9,7 +9,7 @@ import dotenv from "dotenv";
 import { logger } from "./middleware/logger/logger.middleware";
 import passport from "passport";
 import passportAuth from "../src/config/passport.config";
-import userRoutes from "./routes/crud.route";
+import userCrudRoutes from "./routes/crud.route";
 
 const app = express();
 app.use(passport.initialize());
@@ -53,7 +53,15 @@ app.get("/getIp", (req: Request, res: Response) => {
 		ip: req.ip.toString(),
 	});
 });
-app.use(userRoutes);
+
+//Routes
+app.get("/getServerStatus", (req: Request, res: Response) => {
+	res.status(200).json({
+		message: "server is up to running",
+	});
+});
+
+app.use('/user',userCrudRoutes);
 
 app.listen(PORT, () => {
 	console.log(`express server is running on port ${PORT}`);

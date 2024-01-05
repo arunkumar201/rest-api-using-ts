@@ -7,24 +7,28 @@ import {
 	updateUser,
 } from "../services/user.service";
 
+import { ERROR_MESSAGES } from "../utils/messages";
 import { IAuthRequest } from "middleware/auth/auth.middleware";
 import { IUser } from "types/user.types";
-import expressAsyncHandler from "express-async-handler";
+import bcrypt from "bcrypt";
+import { generateJWTToken } from "../utils/generateJWTToken";
 
 //get methods
-export const get = expressAsyncHandler(
-	async (req: IAuthRequest, res: Response, next: NextFunction) => {
-		try {
-			const users = await getAllUsers();
-			if (users) {
-				res.status(201).json({ users: users });
-			}
-		} catch (err: unknown) {
-			console.log("Error is Occurred in getUsers", err);
-			next(err);
+export const get = async (
+	req: IAuthRequest,
+	res: Response,
+	next: NextFunction
+) => {
+	try {
+		const users = await getAllUsers();
+		if (users) {
+			res.status(201).json({ users: users });
 		}
+	} catch (err: unknown) {
+		console.log("Error is Occurred in getUsers", err);
+		next(err);
 	}
-);
+};
 
 export const getUser = async (
 	req: Request,
@@ -46,47 +50,99 @@ export const getUser = async (
 	}
 };
 
-//Post Methods
+// Post Methods
 export const create = async (
 	req: Request,
 	res: Response,
 	next: NextFunction
 ) => {
 	try {
-		const { fullName, email } = req.body;
+		const { fullName, email, password } = req.body;
+
+		const hashedPassword = await bcrypt.hash(password, 10);
 		const userData: IUser = {
 			fullName,
+			password: hashedPassword,
 			email: email.toLowerCase(),
 		};
+
 		const result = await createUser(userData);
 
-		res.json({ data: result }).status(201);
+		res.status(201).json({ data: result });
 	} catch (error) {
 		console.log(`error while creating user: ${error}`);
 		next(error);
 	}
 };
 
-//PUT method
-export const update = async (
+export const login = async (
 	req: Request,
 	res: Response,
 	next: NextFunction
 ) => {
+	const { email, password } = req.body;
+	if (!email || !password) {
+		return res.status(400).json({
+			message: `${ERROR_MESSAGES.MISSING_PARAMETERS},Please provide email and password`,
+		});
+	}
 	try {
+		const isExistingUser = await getUserDetails(email);
+		if (!isExistingUser) {
+			return res.status(200).json({
+				message: ERROR_MESSAGES.USER_NOT_FOUND,
+			});
+		}
+		const isPasswordMatched = await bcrypt.compare(
+			password,
+			isExistingUser.password
+		);
+		if (!isPasswordMatched) {
+			return res.status(200).json({
+				message: ERROR_MESSAGES.INVALID_PASSWORD,
+			});
+		}
+		const token = generateJWTToken(email, isExistingUser.fullName);
+		delete isExistingUser.password;
+		return res.status(200).json({
+			message: "User logged in successfully",
+			data: { user: isExistingUser, token },
+		});
+	} catch (error) {
+		console.log(`error while creating user: ${error}`);
+		return res
+			.status(500)
+			.json({ message: ERROR_MESSAGES.INTERNAL_SERVER_ERROR });
+	}
+};
+
+//PUT method
+export const update = async (
+	req: Request & IAuthRequest,
+	res: Response,
+	next: NextFunction
+) => {
+	try {
+		const { email: currentEmail } = req;
+
 		const { email, fullName } = req.body;
 
-		const data = {
-			email,
-			fullName,
-		};
-
-		const result = await updateUser(data);
-
-		if (result) {
+		if (!email || !fullName) {
 			return res
 				.status(200)
-				.json({ message: "User updated successfully", user: result });
+				.json({ message: ERROR_MESSAGES.MISSING_PARAMETERS });
+		}
+
+		//Check the new email is unique or not
+		const isEmailTaken = await getUserDetails(email);
+		if (!isEmailTaken) {
+			res.status(200).json({ message: ERROR_MESSAGES.EMAIL_ALREADY_TAKEN });
+		}
+
+		const result = await updateUser({ email, fullName });
+
+		if (result) {
+			return res.status(200).json({ message: "User updated successfully" });
 		} else {
 			return res.status(404).json({ message: "User not found" });
 		}

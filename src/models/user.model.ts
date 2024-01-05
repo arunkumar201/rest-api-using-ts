@@ -15,11 +15,16 @@ const userSchema = new Schema<IUser>(
 			required: true,
 			unique: true,
 		},
+		password: {
+			type: String,
+			required: true,
+		},
 	},
 	{
 		timestamps: true,
 	}
 );
+
 
 const UserModel = model<IUserDocument>("users", userSchema);
 

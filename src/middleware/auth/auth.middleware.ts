@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 
 export interface IAuthRequest extends Request {
 	userId: number;
+	email?: string;
 }
 
 export const requireUserAuth = async (

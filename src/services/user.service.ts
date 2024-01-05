@@ -3,10 +3,12 @@ import User from "../models/user.model";
 
 export const getUserDetails = async (email: string) => {
 	try {
-		const user = await User.findOne({ email });
-
+		const user = await User.findOne({ email })
+			.select(" -_id email fullName password")
+			.lean()
+			.exec();
 		if (user) {
-			return user;
+			return { ...user, name: user.fullName };
 		} else {
 			return null;
 		}
@@ -16,10 +18,13 @@ export const getUserDetails = async (email: string) => {
 	}
 };
 
-
 export const getAllUsers = async () => {
 	try {
-		const users = await User.find();
+		const users = await User.find({})
+			.select("-password -_id -__v")
+			.lean()
+			.exec();
+		
 		if (!users) {
 			return null;
 		}
@@ -39,7 +44,7 @@ export const createUser = async (user: IUser) => {
 		await newUser.save();
 		return "user created successfully";
 	} catch (error) {
-		console.log("Erorr While Creating User Error", error);
+		console.log("Error While Creating User Error", error);
 		return null;
 	}
 };

@@ -12,21 +12,24 @@ export const DecodeToken = async (
 	const authHeader = req.headers?.authorization;
 	const token = authHeader?.split(" ")[1];
 	if (!token) {
-		return res.status(400).json({ message: ERROR_MESSAGES.MISSING_PARAMETERS });
+		return res.status(400).json({ message: `${ERROR_MESSAGES.MISSING_TOKEN}` });
 	}
+
 	try {
 		const decode: JwtPayload = jwt.verify(
 			token,
-			process.env.SECRET ?? "123"
+			process.env.SECRET ?? "xyz"
 		) as JwtPayload;
-		if (!decode || !decode.id) {
+
+		if (!decode || !decode.email) {
 			throw new Error("Invalid token structure");
 		}
-
-		req.userId = decode.id;
+		console.log(decode);
+		req.userId = decode?.id;
+		req.email = decode?.email;
 		next();
 	} catch (error) {
-		console.error("Error decoding token:", error);
+		console.error("Error decoding token:", error.message);
 		res.status(401).json({ message: ERROR_MESSAGES.UNAUTHORIZED_ACCESS });
 	}
 };

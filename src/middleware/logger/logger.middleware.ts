@@ -1,10 +1,10 @@
 import { NextFunction, Request, Response } from "express";
 
-import fs from 'fs';
-import path from 'path';
+import fs from "fs";
+import path from "path";
 
 interface CustomRequest extends Request {
-	timestamp?: number;
+	timestamp?: string;
 }
 
 /**
@@ -16,19 +16,19 @@ interface CustomRequest extends Request {
  * @return {void} This function does not return a value.
  */
 
+export function logger(req: CustomRequest, res: Response, next: NextFunction): void {
+	req.timestamp = new Date().toLocaleString();
 
-export function logger(req: CustomRequest, res: Response, next: NextFunction) {
-  req.timestamp = Date.now();
-  const logMessage = `${req.timestamp} :- ${req.method} || ${req.ip} || ${req.originalUrl}`;
-console.log(logMessage);
-	const logFolder = path.join('','log');
+	const logMessage = `${req.timestamp} :- ${req.method} || ${req.ip} || ${req.originalUrl}`;
+	console.log(logMessage);
+	const logFolder = path.join("", "log");
 	console.log(__filename, logFolder);
-  if (!fs.existsSync(logFolder)) {
-    fs.mkdirSync(logFolder);
-  }
+	if (!fs.existsSync(logFolder)) {
+		fs.mkdirSync(logFolder);
+	}
 
-  const logFile = path.join(logFolder, 'logs.txt');
-  fs.appendFileSync(logFile, logMessage + '\n');
+	const logFile = path.join(logFolder, "logs.txt");
+	fs.appendFileSync(logFile, logMessage + "\n");
 
-  next();
+	next();
 }

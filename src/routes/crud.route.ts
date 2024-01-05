@@ -2,29 +2,35 @@ import {
 	create,
 	get,
 	getUser,
+	login,
 	remove,
 	update,
 } from "../controllers/user.controller";
 import express, { Request, Response } from "express";
 
 import { DecodeToken } from "../utils/decodeToken";
-import { passportAuth } from "../utils/passport-strategy";
+import { requireAdminAuth } from "../middleware/auth/admin.auth.middleware";
 
-const userRoutes = express.Router();
+const userCrudRoutes = express.Router();
 
 //GET APIS COLLECTIONS
-userRoutes.get("/", (req: Request, res: Response) => {
+userCrudRoutes.get("/", (req: Request, res: Response) => {
 	res.send({ message: "Welcome to the Rest Api with ts" });
 });
 
-userRoutes.get("/users", DecodeToken, passportAuth, get);
-userRoutes.get("/users/:email", getUser);
+userCrudRoutes.get("/getUsers", DecodeToken, requireAdminAuth, get);
+userCrudRoutes.get("/getUsers/:email", DecodeToken, requireAdminAuth, getUser);
 
 //post
-userRoutes.post("/create-user", create);
-//delete
-userRoutes.delete("/delete-user", remove);
-//put
-userRoutes.put("/update-user", update);
+userCrudRoutes.post("/create-user", create);
+userCrudRoutes.post("/signup", create);
 
-export default userRoutes;
+//Login Route after SignUp
+userCrudRoutes.post("/login", login);
+//put
+userCrudRoutes.delete("/delete-user", DecodeToken, requireAdminAuth, remove);
+
+//delete
+userCrudRoutes.put("/update-user", DecodeToken,update);
+
+export default userCrudRoutes;
