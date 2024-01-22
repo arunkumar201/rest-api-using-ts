@@ -1,6 +1,6 @@
 import RedisStore from "rate-limit-redis";
 import rateLimit from "express-rate-limit";
-import { redisInstance } from "cache/redis";
+import { redisInstance } from "../../cache/redis";
 
 const client = redisInstance.getClient();
 

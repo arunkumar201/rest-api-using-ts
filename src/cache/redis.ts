@@ -1,6 +1,6 @@
 import Redis, { RedisOptions } from "ioredis";
 
-import { config } from "config/env.config";
+import { config } from "../config/env.config";
 
 class RedisClient {
 	private static instance: RedisClient;

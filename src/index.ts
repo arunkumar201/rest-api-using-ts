@@ -1,8 +1,8 @@
-import { DB_NAME, MONGODB_URI, PORT } from "./constants/index";
 import express, { Request, Response } from "express";
 
 import { ConnectOptions } from "mongoose";
 import Database from "./config/database";
+import { PORT } from "./constants/index";
 import bodyParser from "body-parser";
 import { config } from "../src/config/env.config";
 import cors from "cors";
