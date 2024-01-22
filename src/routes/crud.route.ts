@@ -8,6 +8,7 @@ import {
 import express, { Request, Response } from "express";
 
 import { DecodeToken } from "../utils/decodeToken";
+import { authLimiter } from "../middleware/limiter/auth-limiter.middleware";
 import { passportAuth } from "../utils/passport-strategy";
 
 const userRoutes = express.Router();
@@ -17,14 +18,14 @@ userRoutes.get("/", (req: Request, res: Response) => {
 	res.send({ message: "Welcome to the Rest Api with ts" });
 });
 
-userRoutes.get("/users", DecodeToken, passportAuth, get);
+userRoutes.get("/users", authLimiter, DecodeToken, passportAuth, get);
 userRoutes.get("/users/:email", getUser);
 
 //post
-userRoutes.post("/create-user", create);
+userRoutes.post("/create-user", authLimiter, create);
 //delete
-userRoutes.delete("/delete-user", remove);
+userRoutes.delete("/delete-user", authLimiter, remove);
 //put
-userRoutes.put("/update-user", update);
+userRoutes.put("/update-user", authLimiter, update);
 
 export default userRoutes;

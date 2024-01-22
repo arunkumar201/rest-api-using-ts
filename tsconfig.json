@@ -6,9 +6,15 @@
 		"moduleResolution": "NodeNext",
 		"noImplicitAny": true,
 		"outDir": "dist",
-		"baseUrl": "./",
+		"baseUrl": "./src",
+		"pretty": true,
+		// "strict": true,
+		"noUnusedLocals": false,
+		"noUnusedParameters": false,
+		"forceConsistentCasingInFileNames": true,
+		"allowSyntheticDefaultImports": true,
 		"paths": {
-			"*": ["src/*"]
+			"@": ["src/*"]
 		},
 		"sourceMap": true,
 		"types": ["node"]

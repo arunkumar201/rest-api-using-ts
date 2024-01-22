@@ -4,23 +4,24 @@ import express, { Request, Response } from "express";
 import { ConnectOptions } from "mongoose";
 import Database from "./config/database";
 import bodyParser from "body-parser";
+import { config } from "../src/config/env.config";
 import cors from "cors";
-import dotenv from "dotenv";
+import { limiter } from "./middleware/limiter/rateLimiter.middleware";
 import passport from "passport";
-import userRoutes from "./routes/crud.route";
 import passportAuth from "../src/config/passport.config";
+import userRoutes from "./routes/crud.route";
 
 const app = express();
+app.use(limiter);
 app.use(passport.initialize());
 passportAuth.initialize();
 
-dotenv.config();
 
 //Database Instance
-const db = new Database(MONGODB_URI, {
+const db = new Database(config.DATABASE_URI!, {
 	useNewUrlParser: true,
 	useUnifiedTopology: true,
-	dbName: DB_NAME,
+	dbName: config.DB_NAME,
 } as ConnectOptions);
 
 //Connect with DATABASE
