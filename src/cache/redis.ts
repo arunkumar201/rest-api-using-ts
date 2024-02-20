@@ -1,6 +1,6 @@
 import Redis, { RedisOptions } from "ioredis";
 
-import { ENVConfig } from "../config/env.config";
+import { ENVConfig as config } from "../config/env.config";
 
 class RedisClient {
 	private static instance: RedisClient;
@@ -12,7 +12,7 @@ class RedisClient {
 	 * @param {RedisOptions} options - options for the Redis connection
 	 */
 	private constructor(options: RedisOptions) {
-		this.redis = new Redis(ENVConfig.REDIS_HOST, options);
+		this.redis = new Redis(options);
 	}
 
 	/**
@@ -40,8 +40,11 @@ class RedisClient {
 
 // singleton Redis instance
 const redisOptions: RedisOptions = {
-	// Enable auto pipelining
-	enableAutoPipelining: true,
+	host: config.REDIS_HOST,
+	password: config.REDIS_PASSWORD,
+	username: config.REDIS_USERNAME,
+	port: Number(config.REDIS_PORT),
+
 	// Retry strategy: backoff
 	retryStrategy: (times) => Math.min(times * 50, 2000),
 	// Connect timeout
@@ -52,6 +55,47 @@ const redisOptions: RedisOptions = {
 	showFriendlyErrorStack: true,
 	// Lazy connect
 	lazyConnect: true,
+	enableTLSForSentinelMode: true,
 };
 
 export const redisInstance = RedisClient.getInstance(redisOptions);
+
+const redis = redisInstance.getClient();
+redis
+	.connect()
+	.then(() => {
+		console.log("connection established");
+	})
+	.catch((err) => {
+		console.log("connection failed", err);
+	});
+
+redis.on("error", (err) => {
+	console.error(
+		`[ERROR] ${new Date().toLocaleString()} - Error occurred in Redis connection: ${err}`
+	);
+});
+
+redis.on("connect", () => {
+	console.log(
+		`[INFO] ${new Date().toLocaleString()} - Connected to Redis server`
+	);
+});
+
+redis.on("close", () => {
+	console.log(
+		`[INFO] ${new Date().toLocaleString()} - Redis connection closed`
+	);
+});
+
+redis.on("connecting", () => {
+	console.log(
+		`[INFO] ${new Date().toLocaleString()} - Attempting to connect to Redis server`
+	);
+});
+
+redis.on("ready", () => {
+	console.log(
+		`[INFO] ${new Date().toLocaleString()} - Redis client is ready to receive commands`
+	);
+});
