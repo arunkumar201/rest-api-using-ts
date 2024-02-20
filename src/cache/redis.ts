@@ -1,6 +1,6 @@
 import Redis, { RedisOptions } from "ioredis";
 
-import { config } from "../config/env.config";
+import { ENVConfig } from "../config/env.config";
 
 class RedisClient {
 	private static instance: RedisClient;
@@ -12,7 +12,7 @@ class RedisClient {
 	 * @param {RedisOptions} options - options for the Redis connection
 	 */
 	private constructor(options: RedisOptions) {
-		this.redis = new Redis(config.REDIS_HOST,options);
+		this.redis = new Redis(ENVConfig.REDIS_HOST, options);
 	}
 
 	/**

@@ -2,7 +2,7 @@ import * as process from "process";
 
 import dotenv from "dotenv";
 
-dotenv.config({});
+dotenv.config();
 
 class Config {
 	public DATABASE_URI: string | undefined;
@@ -14,7 +14,7 @@ class Config {
 	// public CLIENT_URL: string | undefined;
 	public REDIS_HOST: string | undefined;
 	public ADMIN_EMAIL: string | undefined;
-	public DB_NAME:string | undefined
+	public DB_NAME: string | undefined;
 
 	private readonly DEFAULT_DATABASE_URI = "mongodb://127.0.0.1:27017";
 
@@ -40,4 +40,4 @@ class Config {
 	}
 }
 
-export const config: Config = new Config();
+export const ENVConfig: Config = new Config();

@@ -2,9 +2,9 @@ import express, { Request, Response } from "express";
 
 import { ConnectOptions } from "mongoose";
 import Database from "./config/database";
+import { ENVConfig } from "../src/config/env.config";
 import { PORT } from "./constants/index";
 import bodyParser from "body-parser";
-import { config } from "../src/config/env.config";
 import cors from "cors";
 import { limiter } from "./middleware/limiter/rateLimiter.middleware";
 import passport from "passport";
@@ -16,12 +16,11 @@ app.use(limiter);
 app.use(passport.initialize());
 passportAuth.initialize();
 
-
 //Database Instance
-const db = new Database(config.DATABASE_URI!, {
+const db = new Database(ENVConfig.DATABASE_URI!, {
 	useNewUrlParser: true,
 	useUnifiedTopology: true,
-	dbName: config.DB_NAME,
+	dbName: ENVConfig.DB_NAME,
 } as ConnectOptions);
 
 //Connect with DATABASE
@@ -50,4 +49,6 @@ app.use(userRoutes);
 
 app.listen(PORT, () => {
 	console.log(`express server is running on port ${PORT}`);
+	console.log(`http://localhost:${PORT}`);
+	console.log(`http://localhost:${PORT}/server-status`);
 });
