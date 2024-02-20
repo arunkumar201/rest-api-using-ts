@@ -2,13 +2,13 @@ import express, { Request, Response } from "express";
 
 import { ConnectOptions } from "mongoose";
 import Database from "./config/database";
-import { ENVConfig } from "../src/config/env.config";
+import { ENVConfig } from "./config/env.config";
 import { PORT } from "./constants/index";
 import bodyParser from "body-parser";
 import cors from "cors";
 import { limiter } from "./middleware/limiter/rateLimiter.middleware";
 import passport from "passport";
-import passportAuth from "../src/config/passport.config";
+import passportAuth from "./config/passport.config";
 import userRoutes from "./routes/crud.route";
 
 const app = express();
