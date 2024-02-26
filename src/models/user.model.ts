@@ -4,7 +4,7 @@ import { IUser } from "types/user.types";
 
 export interface IUserDocument extends Document, IUser {}
 
-const userSchema = new Schema<IUser>(
+const userSchema = new Schema<IUserDocument>(
 	{
 		fullName: {
 			type: String,

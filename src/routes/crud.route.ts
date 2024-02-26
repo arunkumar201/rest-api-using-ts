@@ -18,7 +18,8 @@ userRoutes.get("/", (req: Request, res: Response) => {
 	res.send({ message: "Welcome to the Rest Api with ts" });
 });
 
-userRoutes.get("/users", authLimiter, DecodeToken, passportAuth, get);
+userRoutes.get("/users", authLimiter, get);
+
 userRoutes.get("/users/:email", getUser);
 
 //post

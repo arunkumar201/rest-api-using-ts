@@ -8,7 +8,7 @@ mongoose.set("strictQuery", false);
 class Database {
 	private uri: string;
 	private options: ConnectOptions;
-	private connection: Mongoose;
+	private connection: Mongoose | undefined;
 
 	constructor(uri: string, options: ConnectOptions) {
 		this.uri = uri;
@@ -21,20 +21,22 @@ class Database {
 			console.log(
 				`Connected to database: ${this.connection.connection.db.databaseName}`
 			);
-			return;
+			return this.connection;
 		} catch (error) {
 			throw error;
 		}
 	}
 
 	async disconnect(): Promise<void> {
-		try {
-			await this.connection.disconnect();
-			console.log(
-				`Disconnected from database: ${this.connection.connection.db.databaseName}`
-			);
-		} catch (error) {
-			throw error;
+		if (this.connection) {
+			try {
+				await this.connection.disconnect();
+				console.log(
+					`Disconnected from database: ${this.connection?.connection?.db?.databaseName}`
+				);
+			} catch (error) {
+				throw error;
+			}
 		}
 	}
 }

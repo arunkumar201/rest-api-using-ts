@@ -13,7 +13,7 @@ import expressAsyncHandler from "express-async-handler";
 
 //get methods
 export const get = expressAsyncHandler(
-	async (req: IAuthRequest, res: Response, next: NextFunction) => {
+	async (_, res: Response, next: NextFunction) => {
 		try {
 			const users = await getAllUsers();
 			if (users) {
@@ -25,6 +25,7 @@ export const get = expressAsyncHandler(
 		}
 	}
 );
+
 
 export const getUser = async (
 	req: Request,
