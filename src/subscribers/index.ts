@@ -1,1 +1,1 @@
-export * from "./newUser.subscription.ts";
+export * from "./newUser.subscription";

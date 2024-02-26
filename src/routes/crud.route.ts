@@ -7,9 +7,7 @@ import {
 } from "../controllers/user.controller";
 import express, { Request, Response } from "express";
 
-import { DecodeToken } from "../utils/decodeToken";
 import { authLimiter } from "../middleware/limiter/auth-limiter.middleware";
-import { passportAuth } from "../utils/passport-strategy";
 
 const userRoutes = express.Router();
 

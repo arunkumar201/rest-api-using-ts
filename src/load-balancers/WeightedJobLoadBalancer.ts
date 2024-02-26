@@ -37,7 +37,7 @@ class AutoScalingLoadBalancer {
 	 * @param {any} jobData - the data of the job to be distributed
 	 * @return {Promise<void>} a Promise that resolves to void
 	 */
-	public async distributeJob(jobData: any): Promise<void> {
+	public async distributeJob(jobData: unknown): Promise<void> {
 		const selectedQueue = await this.selectQueueDynamically();
 
 		console.debug(

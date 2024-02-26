@@ -7,7 +7,6 @@ import {
 	updateUser,
 } from "../services/user.service";
 
-import { IAuthRequest } from "middleware/auth/auth.middleware";
 import { IUser } from "types/user.types";
 import expressAsyncHandler from "express-async-handler";
 
@@ -72,7 +71,6 @@ export const create = async (
 export const update = async (
 	req: Request,
 	res: Response,
-	next: NextFunction
 ) => {
 	try {
 		const { email, fullName } = req.body;
@@ -101,7 +99,6 @@ export const update = async (
 export const remove = async (
 	req: Request,
 	res: Response,
-	next: NextFunction
 ) => {
 	try {
 		const { email } = req.body;

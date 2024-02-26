@@ -1,23 +1,24 @@
 {
-	"compilerOptions": {
-		"module": "NodeNext",
-		"target": "es6",
-		"esModuleInterop": true,
-		"moduleResolution": "NodeNext",
-		"noImplicitAny": true,
-		"outDir": "dist",
-		"baseUrl": "./src",
-		"pretty": true,
-		"strict": true,
-		"noUnusedLocals": false,
-		"noUnusedParameters": false,
-		"forceConsistentCasingInFileNames": true,
-		"allowSyntheticDefaultImports": true,
-		"paths": {
-			"@/*": ["*"]
-		},
-		"sourceMap": true,
-		"types": ["node"]
-	},
-	"include": ["src/**/*"]
+  "compilerOptions": {
+    "module": "NodeNext",
+    "target": "es6",
+    "esModuleInterop": true,
+    "moduleResolution": "NodeNext",
+    "noImplicitAny": true,
+    "outDir": "dist",
+    "baseUrl": "./src",
+    "pretty": true,
+    "strict": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "forceConsistentCasingInFileNames": true,
+    "allowSyntheticDefaultImports": true,
+    "paths": {
+      "@/*": ["*"]
+    },
+    "sourceMap": true,
+    "types": ["node"]
+  },
+  "include": ["./src/**/*.ts", ".eslintrc.cjs"],
+  "exclude": ["node_modules"]
 }
