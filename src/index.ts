@@ -6,13 +6,16 @@ import { ENVConfig } from "./config/env.config";
 import { PORT } from "./constants/index";
 import bodyParser from "body-parser";
 import cors from "cors";
+import learningRoute from "./routes/learning.route";
 import { limiter } from "./middleware/limiter/rateLimiter.middleware";
 import passport from "passport";
 import passportAuth from "./config/passport.config";
+import status from 'express-status-monitor'
 import userRoutes from "./routes/crud.route";
 
 const app = express();
 app.use(limiter);
+app.use(status())
 app.use(passport.initialize());
 passportAuth.initialize();
 
@@ -46,6 +49,7 @@ app.use(
 
 //Routes
 app.use(userRoutes);
+app.use('/learning',learningRoute)
 
 app.listen(PORT, () => {
 	console.log(`express server is running on port ${PORT}`);
