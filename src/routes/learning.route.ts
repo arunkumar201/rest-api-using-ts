@@ -1,6 +1,5 @@
 import express, { Request, Response } from "express";
-
-import { getTextFile } from "../controllers/learning.controller";
+import { getTextFile, readFileUsingStream, writeFileUsingStream } from "../controllers/learning.controller";
 
 const learningRoute = express.Router(); 
 
@@ -10,4 +9,7 @@ learningRoute.get("/", (req: Request, res: Response) => {
 });
 
 learningRoute.get("/get-txt-file",getTextFile);
+
+learningRoute.post('/write-stream',writeFileUsingStream)
+learningRoute.get('/read-stream',readFileUsingStream)
 export default learningRoute;
