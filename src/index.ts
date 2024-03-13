@@ -1,4 +1,5 @@
-import express, { Request, Response } from "express";
+import { defaultErrorHandler, handler } from "./middleware/error/defaultError.middleware";
+import express, { NextFunction, Request, Response } from "express";
 
 import { ConnectOptions } from "mongoose";
 import Database from "./config/database";
@@ -51,7 +52,14 @@ app.use(
 app.use(userRoutes);
 app.use('/learning',learningRoute)
 
-app.listen(PORT, () => {
+
+// eslint-disable-next-line @typescript-eslint/no-unused-varsx
+app.use(async (err: Error, req: Request, res: Response, next: NextFunction) => {
+    handler.handleError(err,res,next)
+});
+app.use(defaultErrorHandler)
+
+x => {
 	console.log(`express server is running on port ${PORT}`);
 	console.log(`http://localhost:${PORT}`);
 	console.log(`http://localhost:${PORT}/server-status`);
