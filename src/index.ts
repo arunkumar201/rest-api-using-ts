@@ -15,6 +15,9 @@ import status from 'express-status-monitor'
 import userRoutes from "./routes/crud.route";
 
 const app = express();
+
+app.disable("x-powered-by")
+
 app.use(limiter);
 app.use(status())
 app.use(passport.initialize());
@@ -40,6 +43,19 @@ app.get("/server-status", (req: Request, res: Response) => {
 });
 
 //middlewares
+// const allowedOrigins = ['example1.com', 'example3.com'];
+// app.use(
+//   cors({
+//     origin: (origin, next) => {
+//       if (allowedOrigins.includes(origin)) {
+//         next(null, true);
+//       } else {
+//         next(new Error(`${origin} not allowed`));
+//       }
+//     },
+//   }),
+// );
+
 app.use(cors({ credentials: true }));
 app.use(bodyParser.json());
 app.use(
@@ -53,13 +69,12 @@ app.use(userRoutes);
 app.use('/learning',learningRoute)
 
 
-// eslint-disable-next-line @typescript-eslint/no-unused-varsx
 app.use(async (err: Error, req: Request, res: Response, next: NextFunction) => {
     handler.handleError(err,res,next)
 });
 app.use(defaultErrorHandler)
 
-x => {
+app.listen(PORT, () => {
 	console.log(`express server is running on port ${PORT}`);
 	console.log(`http://localhost:${PORT}`);
 	console.log(`http://localhost:${PORT}/server-status`);
