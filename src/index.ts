@@ -14,6 +14,13 @@ import passportAuth from "./config/passport.config";
 import status from 'express-status-monitor'
 import userRoutes from "./routes/crud.route";
 
+import WebSocket, { WebSocketServer } from 'ws';
+
+
+function onSocketError(err:unknown) {
+  console.error(err);
+}
+
 const app = express();
 
 app.disable("x-powered-by")
@@ -74,8 +81,60 @@ app.use(async (err: Error, req: Request, res: Response, next: NextFunction) => {
 });
 app.use(defaultErrorHandler)
 
-app.listen(PORT, () => {
+const server=app.listen(PORT, () => {
 	console.log(`express server is running on port ${PORT}`);
 	console.log(`http://localhost:${PORT}`);
 	console.log(`http://localhost:${PORT}/server-status`);
+});
+
+
+//create WebSocket Server 
+
+//new ws server  running on port 8080
+// const wss = new WebSocketServer({
+//   port: 8080,
+// });
+
+//we can create a new websocket server  using http server 
+const wss = new WebSocketServer({server});
+wss.on('connection',function connection(ws,req) {
+	const ip = req.socket.remoteAddress;
+
+	console.log('Client connected',ip);
+	
+	ws.on('error',(ws: WebSocket,err: Error) => {
+		console.log('Client Disconnected',ip);
+		console.log(err);
+		ws.close();
+	});
+
+	ws.on('message',function message(data,isBinary) {
+		//send message to all clients connected to the websocket server
+		wss.clients.forEach(function each(client) {
+			if (client.readyState === WebSocket.OPEN) {
+				client.send(data,{ binary: isBinary });
+			}
+		});
+
+		console.log('received: %s',data);
+		ws.send('Hey we received your message');
+	});
+});
+
+server.on('upgrade', function upgrade(request, socket, head) {
+    socket.on('error', onSocketError);
+
+    socket.on('data', function (data) {
+        try {
+            const message = data.toString('utf8');
+            console.log('Received message:', message);
+        } catch (err) {
+            console.error('Error processing data:', err);
+            console.log('Raw data:', data);
+        }
+    });
+
+    wss.handleUpgrade(request, socket, head, function done(ws) {
+        wss.emit('connection', ws, request);
+    });
 });
