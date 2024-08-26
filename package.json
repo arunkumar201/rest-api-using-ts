@@ -17,6 +17,9 @@
       "pre-commit": "yarn lint:fix"
     }
   },
+  "lint-staged": {
+    "**/*": "prettier --write --ignore-unknown"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
