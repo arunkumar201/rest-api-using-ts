@@ -11,6 +11,7 @@ import { authLimiter } from "../middleware/limiter/auth-limiter.middleware";
 
 const userRoutes = express.Router();
 
+
 //GET APIS COLLECTIONS
 userRoutes.get("/", (req: Request, res: Response) => {
 	res.send({ message: "Welcome to the Rest Api with ts" });

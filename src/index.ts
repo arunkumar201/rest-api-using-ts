@@ -16,7 +16,7 @@ import userRoutes from "./routes/crud.route";
 import { httpResponse } from "../src/utils/httpResponse";
 import { httpError } from "./utils/httpError.ts";
 import WebSocket,{ WebSocketServer } from 'ws';
-
+import apiRoutes from "./routes/api.route";
 
 function onSocketError(err: unknown) {
 	console.error(err);
@@ -49,7 +49,6 @@ app.get("/server-status",async (req: Request,res: Response,next: NextFunction) =
 	// 	message: "Server is up running! ",
 	// });
 	try {
-		throw new Error("Server is up running!");
 		httpResponse(req,res,200,"Server is up running!",{
 			status: "running"
 		});
@@ -58,6 +57,8 @@ app.get("/server-status",async (req: Request,res: Response,next: NextFunction) =
 		httpError(next,err,req,500);
 	}
 });
+
+app.use('/api',apiRoutes);
 
 //middlewares
 // const allowedOrigins = ['example1.com', 'example3.com'];
