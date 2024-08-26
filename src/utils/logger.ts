@@ -90,7 +90,7 @@ const fileLogFormat = format.printf((info) => {
 const FileTransport = (): Array<FileTransportInstance> => {
 	return [
 		new transports.File({
-			filename: path.join(__dirname,'../','../','logs',`${ENVConfig.NODE_ENV}.log`),
+			filename: path.join(__dirname,'../','../','logs',`${ENVConfig.NODE_ENV ?? 'development'}.log`),
 			level: 'info',
 			format: format.combine(format.timestamp(),fileLogFormat)
 		})
