@@ -17,6 +17,7 @@ import { httpResponse } from "../src/utils/httpResponse";
 import { httpError } from "./utils/httpError.ts";
 import WebSocket,{ WebSocketServer } from 'ws';
 import apiRoutes from "./routes/api.route";
+import { customEventEmitter,MyEventEmitter,requestEmitter } from "./learning/event-emitter";
 
 function onSocketError(err: unknown) {
 	console.error(err);
@@ -42,6 +43,19 @@ const db = new Database(ENVConfig.DATABASE_URI!,{
 db.connect().catch((err: unknown) =>
 	console.error("Error connecting to database:",err)
 );
+app.use('*',(req: Request,_res: Response,next: NextFunction) => {
+	console.log("Request Path:",req.path);
+	requestEmitter.emit("request-received",req,"Hello from server");
+	requestEmitter.emit("error","Request received error");
+	customEventEmitter.emitCustomEvent("Custom Event emitted from server");
+	next();
+})
+app.get("/event-emit",(req: Request,res: Response) => {
+	console.log(req.originalUrl);
+	console.log("Event Emitter triggered");
+	MyEventEmitter.emit("event-emitted","Event emitted from server");
+	res.send("Event Emitter triggered");
+})
 
 //getting server status
 app.get("/server-status",async (req: Request,res: Response,next: NextFunction) => {
