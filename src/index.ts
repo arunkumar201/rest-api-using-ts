@@ -1,9 +1,10 @@
+import { ENVConfig } from "./config/env.config";
+ENVConfig.validateConfig();
 import { defaultErrorHandler } from "./middleware/error/defaultError.middleware";
 import express,{ NextFunction,Request,Response } from "express";
 
 import { ConnectOptions } from "mongoose";
 import Database from "./config/database";
-import { ENVConfig } from "./config/env.config";
 import { PORT } from "./constants/index";
 import bodyParser from "body-parser";
 import cors from "cors";
@@ -17,11 +18,11 @@ import { httpResponse } from "../src/utils/httpResponse";
 import { httpError } from "./utils/httpError.ts";
 import WebSocket,{ WebSocketServer } from 'ws';
 import apiRoutes from "./routes/api.route";
+import { customEventEmitter,MyEventEmitter,requestEmitter } from "./learning/event-emitter";
 
 function onSocketError(err: unknown) {
 	console.error(err);
 }
-
 const app = express();
 
 app.disable("x-powered-by")
@@ -42,6 +43,32 @@ const db = new Database(ENVConfig.DATABASE_URI!,{
 db.connect().catch((err: unknown) =>
 	console.error("Error connecting to database:",err)
 );
+
+
+app.use(cors({
+	credentials: true,
+}));
+app.use(bodyParser.json());
+app.use(
+	bodyParser.urlencoded({
+		extended: true,
+	})
+);
+
+
+app.use('*',(req: Request,_res: Response,next: NextFunction) => {
+	console.log("Request Path:",req.path);
+	requestEmitter.emit("request-received",req,"Hello from server");
+	requestEmitter.emit("error","Request received error");
+	customEventEmitter.emitCustomEvent("Custom Event emitted from server");
+	next();
+})
+app.get("/event-emit",(req: Request,res: Response) => {
+	console.log(req.originalUrl);
+	console.log("Event Emitter triggered");
+	MyEventEmitter.emit("event-emitted","Event emitted from server");
+	res.send("Event Emitter triggered");
+})
 
 //getting server status
 app.get("/server-status",async (req: Request,res: Response,next: NextFunction) => {
@@ -74,13 +101,6 @@ app.use('/api',apiRoutes);
 //   }),
 // );
 
-app.use(cors({ credentials: true }));
-app.use(bodyParser.json());
-app.use(
-	bodyParser.urlencoded({
-		extended: true,
-	})
-);
 
 //Routes
 app.use(userRoutes);
