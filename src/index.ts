@@ -43,6 +43,19 @@ const db = new Database(ENVConfig.DATABASE_URI!,{
 db.connect().catch((err: unknown) =>
 	console.error("Error connecting to database:",err)
 );
+
+
+app.use(cors({
+	credentials: true,
+}));
+app.use(bodyParser.json());
+app.use(
+	bodyParser.urlencoded({
+		extended: true,
+	})
+);
+
+
 app.use('*',(req: Request,_res: Response,next: NextFunction) => {
 	console.log("Request Path:",req.path);
 	requestEmitter.emit("request-received",req,"Hello from server");
@@ -88,13 +101,6 @@ app.use('/api',apiRoutes);
 //   }),
 // );
 
-app.use(cors({ credentials: true }));
-app.use(bodyParser.json());
-app.use(
-	bodyParser.urlencoded({
-		extended: true,
-	})
-);
 
 //Routes
 app.use(userRoutes);
