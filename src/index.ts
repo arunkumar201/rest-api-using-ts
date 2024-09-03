@@ -1,9 +1,10 @@
+import { ENVConfig } from "./config/env.config";
+ENVConfig.validateConfig();
 import { defaultErrorHandler } from "./middleware/error/defaultError.middleware";
 import express,{ NextFunction,Request,Response } from "express";
 
 import { ConnectOptions } from "mongoose";
 import Database from "./config/database";
-import { ENVConfig } from "./config/env.config";
 import { PORT } from "./constants/index";
 import bodyParser from "body-parser";
 import cors from "cors";
@@ -22,7 +23,6 @@ import { customEventEmitter,MyEventEmitter,requestEmitter } from "./learning/eve
 function onSocketError(err: unknown) {
 	console.error(err);
 }
-
 const app = express();
 
 app.disable("x-powered-by")
