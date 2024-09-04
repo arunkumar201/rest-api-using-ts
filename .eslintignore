@@ -1,11 +1,7 @@
-    /node_modules/*
 
-    dist/*
-    build/*
-    coverage/*
-
-    **/*.d.ts
-
-    /src/public/
-
-    /src/types/
+dist/*
+build/*
+**/*.d.ts
+/src/types/ 
+node_modules
+**/**/node_modules

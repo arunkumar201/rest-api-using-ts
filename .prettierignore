@@ -1,0 +1,14 @@
+node_modules
+build
+.yarn
+.husky
+**/**/node_modules
+*.lock
+*.log
+.gitignore
+.npmignore
+.prettierignore
+.DS_Store
+.eslintignore
+.npmrc
+.nvmrc

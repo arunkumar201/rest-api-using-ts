@@ -20,6 +20,10 @@
   "lint-staged": {
     "**/*": "prettier --write --ignore-unknown"
   },
+  "engines": {
+    "node": ">=18",
+    "yarn": "3.4.1"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -74,5 +78,6 @@
   },
   "optionalDependencies": {
     "bufferutil": "^4.0.8"
-  }
+  },
+  "packageManager": "yarn@4.4.1"
 }
